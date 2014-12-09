@@ -6,16 +6,20 @@ namespace SongService
 
 
     /// <summary>
-    /// This is the SQL data store which read and write data to SQL database. I won't implement it here because 
-    /// it requires a test database which takes long to setup. :) 
+    /// This is the SQL data store which read and write data to SQL database. 
+    ///
+    /// I DIDN'T IMPLEMENT  THIS CLASS HERE BECAUSE IT REQUIRES A TEST DATABASE WHICH TAKES A LITTLE TIME 
+    /// TO SETUP. :) 
     /// 
     /// TODO: add SQL implementation.
+    ///
     /// </summary>
     public class SQLDataSource : IDataStore
     {
 
         public Album readOne(string albumName)
         {
+            // TODO: CREATE STORE PROCEDURE AND CALL IT.
             throw new NotImplementedException();
         }
 
