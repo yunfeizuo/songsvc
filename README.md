@@ -76,7 +76,7 @@ I didn't create unit tests because of the time limit.
 # Quick Start
 
 Open the project with VS 2013. Hit F5 to run the service in debug model. Use the WCF test client to send testing request to 
-the service. 
+the service. For example, double click the FindAlbum() API and put "OK Computer" as the name, the test client will return the ablum with name "OK Computer".
 
 I made a simple change to the testing XML file Songs.xml. I changed some song ids so that it meets the requirements of unique song id.
 
