@@ -4,7 +4,7 @@
 In order to handle the large volume of concurrent requests efficiently, we need to cache data that load from the data source in 
 memory. 
 
-# Basic OOP obstraction
+# Basic OOP Abstraction
 
 As we have multiple types of data sources, and we need to switch between them transperantly to our clients and other 
 compoenents in the service, we need to model the data sources with a unified interface and implement the interface for both XML 
