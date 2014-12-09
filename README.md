@@ -10,8 +10,8 @@ As we have multiple types of data sources, and we need to switch between them tr
 compoenents in the service, we need to model the data sources with a unified interface and implement the interface for both XML 
 and SQL data sources. This is the basic OOP theory of abstraction. 
 
-In this service, the ```XmlDataStore``` and ```SQLDataStore``` encapsulate the XML and SQL data store respectively. They both 
-implment a common interface ```IDataStore```.
+In this service, the [XmlDataStore](SongSvc/XmlDataStore.cs) and [SQLDataStore](SongSvc/SQLDataStore.cs) encapsulate the XML and SQL data store respectively. They both 
+implment a common interface [IDataStore](SongSvc/IDataStore.cs).
 
 # Design Patterns
 
@@ -23,22 +23,22 @@ services and databases. We generally do a incremental cache sync.
 I applied the "Decorate Pattern" on the service model. A decorate pattern allows us to attache addtional behaviors to an simple
 object with the same interface. Let's assume we do a pure memory service without a data source sync. We can put the data into 
 a memory concurrent hash table, which serves user with the perfect performance. This pure memory service is coded as 
-class ['''MusicCacheSvc'''](SongSvc/MusicCacheSvc.cs). This class alone can work independently. It doesn't have any external dependency to data sources or
+class [MusicCacheSvc](SongSvc/MusicCacheSvc.cs). This class alone can work independently. It doesn't have any external dependency to data sources or
 cache loading policy (e.g. cache preload, or delay load). 
 
 The cache loading polices are attached to the basic pure memory solution by following decorators:
-1. ```PreloadCacheMusicSvc```: Preload all data from data source. 
-2. ```LazyLoadCacheMusicSvc```: Delay load cache from data source. This decorator intercepts the find album service calls and 
+1. [PreloadCacheMusicSvc](SongSvc/PreloadCacheMusicSvc.cs): Preload all data from data source. 
+2. [LazyLoadCacheMusicSvc](SongSvc/LazyLoadCacheMusicSvc.cs): Delay load cache from data source. This decorator intercepts the find album service calls and 
 foward to the basic service to check if the data is in cache, if it's a cache miss, tries to load data from a data source.
-3. ```SnapshotSavingCacheMusicSvc```: Save all cached data into data source periodically. A timer kick off a background writing
+3. [SnapshotSavingCacheMusicSvc](SongSvc/SnapshotSavingCacheMusicSvc.cs): Save all cached data into data source periodically. A timer kick off a background writing
 process in a fixed schedule. 
-4. ```DirtySavingCacheMusicSvc```: This decorator intercepts data update service calls and mark the changed data as dirty. A 
+4. [DirtySavingCacheMusicSvc](SongSvc/DirtySavingCacheMusicSvc.cs): This decorator intercepts data update service calls and mark the changed data as dirty. A 
 backgroud worker thread will write all dirty data into data source. I uses the PRODUCER/CONSUMER paradigm here. I put a dirty
 data entry into a blocking queue while the worker thread tries to take dirty data out from that queue and write to data stores.
 we can also extend this to write data synchronously when client want to confirm the writing success.
 
 Because each decorator only override a limited subset of the base service object. I created an abstract decorator class 
-```CacheMusicSvcDecorator```, which implements the default decorator behavior: foward the call to the decorated service object. 
+[CacheMusicSvcDecorator](SongSvc/CacheMusicSvcDecorator.cs), which implements the default decorator behavior: foward the call to the decorated service object. 
 
 This design results in a loosely couple system. All the core services doesn't know each other, policis are attached at runtime
 by injecting one service into another. Changes to one service won't affect another. It make it very easy to configure the services cynamically.
