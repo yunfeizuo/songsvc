@@ -27,12 +27,12 @@ class [MusicCacheSvc](SongSvc/MusicCacheSvc.cs). This class alone can work indep
 cache loading policy (e.g. cache preload, or delay load). 
 
 The cache loading polices are attached to the basic pure memory solution by following decorators:
-1. [PreloadCacheMusicSvc](SongSvc/PreloadCacheMusicSvc.cs): Preload all data from data source. 
-2. [LazyLoadCacheMusicSvc](SongSvc/LazyLoadCacheMusicSvc.cs): Delay load cache from data source. This decorator intercepts the find album service calls and 
+* [PreloadCacheMusicSvc](SongSvc/PreloadCacheMusicSvc.cs): Preload all data from data source. 
+* [LazyLoadCacheMusicSvc](SongSvc/LazyLoadCacheMusicSvc.cs): Delay load cache from data source. This decorator intercepts the find album service calls and 
 foward to the basic service to check if the data is in cache, if it's a cache miss, tries to load data from a data source.
-3. [SnapshotSavingCacheMusicSvc](SongSvc/SnapshotSavingCacheMusicSvc.cs): Save all cached data into data source periodically. A timer kick off a background writing
+* [SnapshotSavingCacheMusicSvc](SongSvc/SnapshotSavingCacheMusicSvc.cs): Save all cached data into data source periodically. A timer kick off a background writing
 process in a fixed schedule. 
-4. [DirtySavingCacheMusicSvc](SongSvc/DirtySavingCacheMusicSvc.cs): This decorator intercepts data update service calls and mark the changed data as dirty. A 
+* [DirtySavingCacheMusicSvc](SongSvc/DirtySavingCacheMusicSvc.cs): This decorator intercepts data update service calls and mark the changed data as dirty. A 
 backgroud worker thread will write all dirty data into data source. I uses the PRODUCER/CONSUMER paradigm here. I put a dirty
 data entry into a blocking queue while the worker thread tries to take dirty data out from that queue and write to data stores.
 we can also extend this to write data synchronously when client want to confirm the writing success.
