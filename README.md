@@ -1,23 +1,29 @@
-﻿
+
 # Basic Design Theory
 
-In order to handle the large volume of concurrent requests efficiently, we need to cache data in memory from the data source. 
-As we have multiple types of data source and we need to switch between data sources transperantly to our clients, we need to 
-model the data sources with a unified interface and implement the interface for both XML and SQL data sources. 
+In order to handle the large volume of concurrent requests efficiently, we need to cache data that load from the data source in 
+memory. 
 
 # Basic OOP obstraction
 
-However, XML and SQL data store is working very differently. For example, we generally read and write the whole XML file when
-we need to load or save changed data, we call it snapshot data sync. However, a snapshot data sync for SQL is very wasteful. 
-In a case when we have huge dataset shared by a cluster of server, we want to minimize the amount of data transferred between
-service and databases. We generally do a incremental cache sync. 
+As we have multiple types of data sources, and we need to switch between them transperantly to our clients and other 
+compoenents in the service, we need to model the data sources with a unified interface and implement the interface for both XML 
+and SQL data sources. This is the basic OOP theory of abstraction. 
+
+In this service, the ```XmlDataStore``` and ```SQLDataStore``` encapsulate the XML and SQL data store respectively. They both 
+implment a common interface ```IDataStore```.
 
 # Design Patterns
+
+However, XML and SQL data store is working very differently. For example, we generally read and write the whole XML file when
+we need to load data or save changed data, we call it snapshot data sync. On the other hand, snapshot data sync for database is very wasteful. 
+In a case when we have huge dataset shared by a cluster of servers, we want to minimize the amount of data transferred between
+services and databases. We generally do a incremental cache sync. 
 
 I applied the "Decorate Pattern" on the service model. A decorate pattern allows us to attache addtional behaviors to an simple
 object with the same interface. Let's assume we do a pure memory service without a data source sync. We can put the data into 
 a memory concurrent hash table, which serves user with the perfect performance. This pure memory service is coded as 
-class '''MusicCacheSvc'''. This class alone can work independently. It doesn't have any external dependency to data sources or
+class ['''MusicCacheSvc'''](SongSvc/MusicCacheSvc.cs). This class alone can work independently. It doesn't have any external dependency to data sources or
 cache loading policy (e.g. cache preload, or delay load). 
 
 The cache loading polices are attached to the basic pure memory solution by following decorators:
